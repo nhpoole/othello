@@ -1,7 +1,7 @@
 #include "player.hpp"
 #include <vector>
 #include <iostream>
-
+#include <climits>
 using namespace std;
 
 /*
@@ -69,11 +69,11 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     if (othelloBoard->hasMoves(playerSide))
     {
 
-        vector<Move*> possible_moves = 
-                othelloBoard->possibleMoves(playerSide);
+        // vector<Move*> possible_moves = 
+        //         othelloBoard->possibleMoves(playerSide);
                            
         // random move player
-      /*  int rand_index = rand() % possible_moves.size();
+        /*  int rand_index = rand() % possible_moves.size();
         cerr << possible_moves.size() << endl;
         Move *rand_move = new Move(possible_moves[rand_index]->x,
                                   possible_moves[rand_index]->y);*/
@@ -81,6 +81,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         
         
         // heuristic move player
+<<<<<<< HEAD
         int max_score =  -100000;
         int temp_score;
         Move *best_move = possible_moves[0];        
@@ -97,6 +98,25 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             }
             delete board_copy;
         }
+=======
+        // int max_score =  -100000;
+        // int temp_score;
+        // Move *best_move = possible_moves[0];        
+        // for (unsigned int i = 0; i < possible_moves.size(); i++)
+        // {
+        //     Board *board_copy = othelloBoard->copy();
+        //     board_copy->doMove(possible_moves[i], playerSide);
+        //     temp_score = board_copy->calculateScore(playerSide);
+        //     if (max_score < temp_score)
+        //     {
+        //         max_score = temp_score;
+        //         cerr << "got here" << endl;
+        //         best_move->setX(possible_moves[i]->x);
+        //         best_move->setY(possible_moves[i]->y);
+        //     }
+        //     delete board_copy;
+        // }
+>>>>>>> cdca608ffd25fef77a3c5f0ffa42c911d8b20133
         
         
         
@@ -116,9 +136,33 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      //   return rand_move;
         
         // heuristic move player
-        othelloBoard->doMove(best_move, playerSide);
-        return best_move;
-        
+        // othelloBoard->doMove(best_move, playerSide);
+        // return best_move;
+
+
+        //minimax
+        double minimum = INT_MIN;
+        int bestx;
+        for(int x = 0;x<othelloBoard->possibleMoves(playerSide).size();x++)
+        {
+            Board *newOthelloCopy = othelloBoard->copy();
+            newOthelloCopy->doMove(newOthelloCopy->possibleMoves(playerSide)[x], playerSide);
+            for(int y = 0;y<newOthelloCopy->possibleMoves(opponentSide).size();y++)
+            {
+                Board *newNewOthelloCopy = newOthelloCopy->copy();
+                newNewOthelloCopy->doMove(newNewOthelloCopy->possibleMoves(opponentSide)[y], opponentSide);
+                if(newOthelloCopy->calculateScore(playerSide)>minimum)
+                {
+                    minimum = newOthelloCopy->calculateScore(playerSide);
+                    bestx = x;
+                }
+                delete newNewOthelloCopy;
+            }
+            delete newOthelloCopy;
+        }
+        Move *  bestMove = othelloBoard->possibleMoves(playerSide)[bestx];
+        othelloBoard->doMove(bestMove, playerSide);
+        return bestMove;
     }
     
     else
