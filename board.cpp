@@ -204,11 +204,11 @@ int Board::getDiffScore(Side playerSide)
     int diffScore;
     if (playerSide == WHITE)
     {
-        diffScore = white_score - black_score;
+        diffScore = countWhite() - countBlack();
     }
     else
     {
-        diffScore = black_score - white_score;
+        diffScore = countBlack() - countWhite();
     }
     return diffScore;
 }

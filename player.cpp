@@ -20,8 +20,6 @@ Player::Player(Side side) {
      */
      
     othelloBoard = new Board;
-    othelloBoard->black_score = 2;
-    othelloBoard->white_score = 2;
     playerSide = side;
     if (playerSide == WHITE)
     {
@@ -30,8 +28,7 @@ Player::Player(Side side) {
     else
     {
         opponentSide = WHITE;
-    }
-    
+    }   
 }
 
 /*
@@ -62,7 +59,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
     if (opponentsMove != nullptr)
     {
-
         othelloBoard->doMove(opponentsMove, opponentSide);
     }
         
@@ -123,26 +119,44 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
 
         //minimax
-        double minimum = INT_MIN;
-        int bestx;
-        for(int x = 0;x<othelloBoard->possibleMoves(playerSide).size();x++)
+        int maximum_min = INT_MIN;
+        int bestX = 0;
+        
+        for (unsigned int x = 0; 
+             x < othelloBoard->possibleMoves(playerSide).size(); x++)
         {
             Board *newOthelloCopy = othelloBoard->copy();
-            newOthelloCopy->doMove(newOthelloCopy->possibleMoves(playerSide)[x], playerSide);
-            for(int y = 0;y<newOthelloCopy->possibleMoves(opponentSide).size();y++)
+            newOthelloCopy->doMove(newOthelloCopy->possibleMoves(playerSide)[x],
+                                   playerSide);
+            int localMin = INT_MAX;
+            for (unsigned int y = 0; y < newOthelloCopy->
+                 possibleMoves(opponentSide).size(); y++)
             {
                 Board *newNewOthelloCopy = newOthelloCopy->copy();
-                newNewOthelloCopy->doMove(newNewOthelloCopy->possibleMoves(opponentSide)[y], opponentSide);
-                if(newOthelloCopy->calculateScore(playerSide)>minimum)
+                newNewOthelloCopy->doMove(newNewOthelloCopy->
+                                possibleMoves(opponentSide)[y], opponentSide);
+               
+                if (newNewOthelloCopy->getDiffScore(playerSide) < localMin)
                 {
-                    minimum = newOthelloCopy->calculateScore(playerSide);
-                    bestx = x;
+                    localMin = newNewOthelloCopy->getDiffScore(playerSide);
                 }
+               
+              // For better heuristic
+               /* if (newNewOthelloCopy->calculateScore(playerSide) < localMin)
+                {
+                    localMin = newNewOthelloCopy->calculateScore(playerSide);
+                } */
                 delete newNewOthelloCopy;
+            }
+            if (localMin > maximum_min)
+            {
+                maximum_min = localMin;
+                bestX = x;
             }
             delete newOthelloCopy;
         }
-        Move *  bestMove = othelloBoard->possibleMoves(playerSide)[bestx];
+        
+        Move *bestMove = othelloBoard->possibleMoves(playerSide)[bestX];
         othelloBoard->doMove(bestMove, playerSide);
         return bestMove;
     }

@@ -24,9 +24,6 @@ public:
     bool onBoard(int x, int y);
 
 
-    int white_score;
-    int black_score;
-
     bool isDone();
     bool hasMoves(Side side);
     bool checkMove(Move *m, Side side);
