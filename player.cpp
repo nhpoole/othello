@@ -92,7 +92,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             if (max_score < temp_score)
             {
                 max_score = temp_score;
-                cerr << "got here" << endl;
                 best_move->setX(possible_moves[i]->x);
                 best_move->setY(possible_moves[i]->y);
             }
