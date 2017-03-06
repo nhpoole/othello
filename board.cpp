@@ -178,3 +178,160 @@ void Board::setBoard(char data[]) {
         }
     }
 }
+
+vector<Move*> Board::possibleMoves(Side playerSide)
+{
+    bool is_possible;
+    vector<Move*> possibleMoves;
+    
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            Move *temp_move = new Move(i, j);
+            is_possible = checkMove(temp_move, playerSide);
+            if (is_possible)
+            {
+                possibleMoves.push_back(temp_move);
+            }
+        }
+    }
+    return possibleMoves;    
+}
+
+int Board::getDiffScore(Side playerSide)
+{
+    int diffScore;
+    if (playerSide == WHITE)
+    {
+        diffScore = white_score - black_score;
+    }
+    else
+    {
+        diffScore = black_score - white_score;
+    }
+    return diffScore;
+}
+
+int Board::calculateScore(Side playerSide)
+{
+    int black_count = countBlack();
+    int white_count = countWhite();
+    int base_score;
+    
+    if (playerSide == WHITE)
+    {
+        base_score = white_count;
+    }
+    else
+    {
+        base_score = black_count;
+    }
+    
+    // count corners as five * score
+    if (get(playerSide, 0, 0))
+    {
+        base_score += 4;
+    }
+    if (get(playerSide, 0, 7))
+    {
+        base_score += 4;
+    }   
+    if (get(playerSide, 7, 0))
+    {
+        base_score += 4;
+    }    
+    if (get(playerSide, 7, 7))
+    {
+        base_score += 4;
+    }
+    
+    // count non-corner-adjacent edge squares as three * score
+    for (int i = 2; i < 6; i++)
+    {
+        if (get(playerSide, 0, i))
+        {
+            base_score += 2;
+        }
+        if (get(playerSide, 7, i))
+        {
+            base_score += 2;
+        }
+        if (get(playerSide, i, 0))
+        {
+            base_score += 2;
+        }
+        if (get(playerSide, i, 7))
+        {
+            base_score += 2;
+        }
+    }
+    
+    // count corner-adjacent edge squares as -1 * score if corner empty
+    // count corner-adjacent diagonal square as -3 * score if corner empty
+    if (!occupied(0, 0))
+    {
+        if (get(playerSide, 0, 1))
+        {
+            base_score -= 2;
+        } 
+        if (get(playerSide, 1, 0))
+        {
+            base_score -= 2;
+        }
+        if (get(playerSide, 1, 1))
+        {
+            base_score -= 4;
+        }
+    }
+    
+    if (!occupied(0, 7))
+    {
+        if (get(playerSide, 0, 6))
+        {
+            base_score -= 2;
+        } 
+        if (get(playerSide, 1, 7))
+        {
+            base_score -= 2;
+        }
+        if (get(playerSide, 1, 6))
+        {
+            base_score -= 4;
+        }
+    }
+    
+    if (!occupied(7, 0))
+    {
+        if (get(playerSide, 7, 1))
+        {
+            base_score -= 2;
+        } 
+        if (get(playerSide, 6, 0))
+        {
+            base_score -= 2;
+        }
+        if (get(playerSide, 6, 1))
+        {
+            base_score -= 4;
+        }
+    }
+    
+    if (!occupied(7, 7))
+    {
+        if (get(playerSide, 6, 7))
+        {
+            base_score -= 2;
+        } 
+        if (get(playerSide, 7, 6))
+        {
+            base_score -= 2;
+        }
+        if (get(playerSide, 6, 6))
+        {
+            base_score -= 4;
+        }
+    }
+    
+    return base_score;                        
+}

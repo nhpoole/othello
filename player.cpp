@@ -1,4 +1,8 @@
 #include "player.hpp"
+#include <vector>
+#include <iostream>
+
+using namespace std;
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -14,6 +18,20 @@ Player::Player(Side side) {
      * precalculating things, etc.) However, remember that you will only have
      * 30 seconds.
      */
+     
+    othelloBoard = new Board;
+    othelloBoard->black_score = 2;
+    othelloBoard->white_score = 2;
+    playerSide = side;
+    if (playerSide == WHITE)
+    {
+        opponentSide = BLACK;
+    }
+    else
+    {
+        opponentSide = WHITE;
+    }
+    
 }
 
 /*
@@ -40,5 +58,72 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    return nullptr;
+    
+
+    if (opponentsMove != nullptr)
+        {
+
+            othelloBoard->doMove(opponentsMove, opponentSide);
+        }
+            
+        if (othelloBoard->hasMoves(playerSide))
+        {
+
+            vector<Move*> possible_moves = 
+                    othelloBoard->possibleMoves(playerSide);
+                               
+            // random move player
+          /*  int rand_index = rand() % possible_moves.size();
+            cerr << possible_moves.size() << endl;
+            Move *rand_move = new Move(possible_moves[rand_index]->x,
+                                      possible_moves[rand_index]->y);*/
+            
+            
+            
+            // heuristic move player
+            int max_score =  -100000;
+            int temp_score;
+            Move *best_move = possible_moves[0];        
+            for (unsigned int i = 0; i < possible_moves.size(); i++)
+            {
+                Board *board_copy = othelloBoard->copy();
+                board_copy->doMove(possible_moves[i], playerSide);
+                temp_score = board_copy->calculateScore(playerSide);
+                if (max_score < temp_score)
+                {
+                    max_score = temp_score;
+                    cerr << "got here" << endl;
+                    best_move->setX(possible_moves[i]->x);
+                    best_move->setY(possible_moves[i]->y);
+                }
+                delete board_copy;
+            }
+            
+            
+            
+            // minimax algorithm
+           // int diff_score = othelloBoard->getDiffScore(playerSide);
+            
+            
+            
+            
+
+        //    othelloBoard->white_score = othelloBoard->calculateScore(WHITE);
+        //    othelloBoard->black_score = othelloBoard->calculateScore(BLACK);
+                        
+            // random move player
+         //   othelloBoard->doMove(rand_move, playerSide);
+         //   cerr << "recorded move" << endl;
+         //   return rand_move;
+            
+            // heuristic move player
+            othelloBoard->doMove(best_move, playerSide);
+            return best_move;
+            
+        }
+        
+        else
+        {
+            return nullptr;
+        }
 }
