@@ -50,6 +50,97 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return nullptr.
  */
+Move * Player::doAlphaBeta(Board *board, int depth, Side player)
+{
+    double max  = INT_MIN;
+    int bestx;
+    Side otherPlayer = player;
+    if(player == playerSide)
+    {
+        otherPlayer = opponentSide;
+    }
+    if(player == opponentSide)
+    {
+        otherPlayer = playerSide;
+    }
+    for(int x = 0;x<othelloBoard->possibleMoves(player).size();x++)
+    {
+        Board *othelloBoardCopy = board->copy();
+        board->doMove(othelloBoardCopy->possibleMoves(player)[x], player);
+        int z = alphaBeta(othelloBoardCopy, depth, INT_MIN, INT_MAX, true, otherPlayer);
+        delete othelloBoardCopy;
+        if(z > max)
+        {
+            max = z;
+            bestx = x;
+        }
+    }
+    return othelloBoard->possibleMoves(player)[bestx];
+}
+double Player::alphaBeta(Board *board, int depth, double alpha, double beta, bool maximizing, Side player)
+{
+    if(depth ==0 || board->possibleMoves(player).size() ==0)
+    {
+        return (double)board->getDiffScore(player);
+    }
+    Side otherPlayer = player;
+    if(player == playerSide)
+    {
+        otherPlayer = opponentSide;
+    }
+    if(player == opponentSide)
+    {
+        otherPlayer = playerSide;
+    }
+    if (maximizing)
+    {
+        double v = INT_MIN;
+        for(int x = 0;x<board->possibleMoves(player).size();x++)
+        {
+            Board *othelloBoardCopy = board->copy();
+            othelloBoardCopy->doMove(board->possibleMoves(player)[x], player);
+            double alphaBetaCurrent = alphaBeta(othelloBoardCopy, depth-1, alpha, beta, true, otherPlayer);
+            delete othelloBoardCopy;
+            if(v<alphaBetaCurrent)
+            {
+                v = alphaBetaCurrent;
+            }
+            if(alpha < v)
+            {
+                alpha = v;
+            }
+            if(beta <= alpha)
+            {
+                break;
+            }
+        }
+        return v;
+    }
+    else
+    {
+        double v = INT_MAX;
+        for(int x = 0;x<board->possibleMoves(player).size();x++)
+        {
+            Board *othelloBoardCopy = board->copy();
+            othelloBoardCopy->doMove(board->possibleMoves(player)[x], player);
+            double alphaBetaCurrent = alphaBeta(othelloBoardCopy, depth-1, alpha, beta, false, otherPlayer);
+            delete othelloBoardCopy;
+            if(v > alphaBetaCurrent)
+            {
+                v = alphaBetaCurrent;
+            }
+            if(beta > v)
+            {
+                beta = v;
+            }
+            if(beta<=alpha)
+            {
+                break;
+            }
+        }
+        return v;
+    }
+}
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
     /*
      * TODO: Implement how moves your AI should play here. You should first
@@ -119,44 +210,43 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
 
         //minimax
-        int maximum_min = INT_MIN;
-        int bestX = 0;
+        // int maximum_min = INT_MIN;
+        // int bestX = 0;
         
-        for (unsigned int x = 0; 
-             x < othelloBoard->possibleMoves(playerSide).size(); x++)
-        {
-            Board *newOthelloCopy = othelloBoard->copy();
-            newOthelloCopy->doMove(newOthelloCopy->possibleMoves(playerSide)[x],
-                                   playerSide);
-            int localMin = INT_MAX;
-            for (unsigned int y = 0; y < newOthelloCopy->
-                 possibleMoves(opponentSide).size(); y++)
-            {
-                Board *newNewOthelloCopy = newOthelloCopy->copy();
-                newNewOthelloCopy->doMove(newNewOthelloCopy->
-                                possibleMoves(opponentSide)[y], opponentSide);
+        // for (unsigned int x = 0; 
+        //      x < othelloBoard->possibleMoves(playerSide).size(); x++)
+        // {
+        //     Board *newOthelloCopy = othelloBoard->copy();
+        //     newOthelloCopy->doMove(newOthelloCopy->possibleMoves(playerSide)[x],playerSide);
+        //     int localMin = INT_MAX;
+        //     for (unsigned int y = 0; y < newOthelloCopy->possibleMoves(opponentSide).size(); y++)
+        //     {
+        //         Board *newNewOthelloCopy = newOthelloCopy->copy();
+        //         newNewOthelloCopy->doMove(newNewOthelloCopy->possibleMoves(opponentSide)[y], opponentSide);
                
-                if (newNewOthelloCopy->getDiffScore(playerSide) < localMin)
-                {
-                    localMin = newNewOthelloCopy->getDiffScore(playerSide);
-                }
+        //         if (newNewOthelloCopy->getDiffScore(playerSide) < localMin)
+        //         {
+        //             localMin = newNewOthelloCopy->getDiffScore(playerSide);
+        //         }
                
-              // For better heuristic
-               /* if (newNewOthelloCopy->calculateScore(playerSide) < localMin)
-                {
-                    localMin = newNewOthelloCopy->calculateScore(playerSide);
-                } */
-                delete newNewOthelloCopy;
-            }
-            if (localMin > maximum_min)
-            {
-                maximum_min = localMin;
-                bestX = x;
-            }
-            delete newOthelloCopy;
-        }
+        //       // For better heuristic
+        //        /* if (newNewOthelloCopy->calculateScore(playerSide) < localMin)
+        //         {
+        //             localMin = newNewOthelloCopy->calculateScore(playerSide);
+        //         } */
+        //         delete newNewOthelloCopy;
+        //     }
+        //     if (localMin > maximum_min)
+        //     {
+        //         maximum_min = localMin;
+        //         bestX = x;
+        //     }
+        //     delete newOthelloCopy;
+        // }
         
-        Move *bestMove = othelloBoard->possibleMoves(playerSide)[bestX];
+        // Move *bestMove = othelloBoard->possibleMoves(playerSide)[bestX];
+        Move *bestMove = doAlphaBeta(othelloBoard, 10, playerSide);
+        std::cerr<<"move";
         othelloBoard->doMove(bestMove, playerSide);
         return bestMove;
     }
