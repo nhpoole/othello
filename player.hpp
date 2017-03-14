@@ -1,6 +1,6 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
-#define MINIMAX_DEPTH 7
+#define MINIMAX_DEPTH 12
 
 #include <iostream>
 #include "common.hpp"
