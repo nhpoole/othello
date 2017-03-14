@@ -67,19 +67,10 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     {
          vector<Move*> possible_moves = 
                  othelloBoard->possibleMoves(playerSide);
+       
         
-        // Move *bestMove = othelloBoard->possibleMoves(playerSide)[bestX];
-       /* Move *bestMove = doAlphaBeta(othelloBoard, 10, playerSide);
-        std::cerr<<"move";*/
-        
-        int bestX;
+       // int bestX;
         Move *bestMove = possible_moves[0];
-       // cerr << "possible moves: \n";
-       /* for (unsigned int i = 0; i < possible_moves.size(); i++)
-        {
-            cerr << "move: (" << possible_moves[i]->x << ", " << possible_moves[i]->y << ")\n";
-        }    
-        cerr << endl;   */     
         
         // 2-ply minimax
        /* bestX = two_ply_minimax(possible_moves);
@@ -95,8 +86,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         
         alpha_beta_prune(MINIMAX_DEPTH - 1, playerSide, possible_moves,
                          othelloBoard, bestMove, alpha, beta);
-        
-       // cerr << "best move: (" << bestMove->x << ", " << bestMove->y << ")\n\n";        
         
         othelloBoard->doMove(bestMove, playerSide);
         return bestMove;
