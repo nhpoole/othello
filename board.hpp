@@ -1,5 +1,9 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
+#define CORN 4
+#define CORN_EMPTY_ADJ 2
+#define CORN_EMPTY_DIAG 4
+#define EDGE 2
 
 #include <bitset>
 #include "common.hpp"

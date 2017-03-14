@@ -218,32 +218,54 @@ int Board::calculateScore(Side playerSide)
     int black_count = countBlack();
     int white_count = countWhite();
     int base_score;
+   /* vector <Move*> player_possibles = possibleMoves(playerSide);
+    int player_moves = player_possibles.size();
+    for (unsigned int i = 0; i < player_possibles.size(); i++)
+    {
+        delete player_possibles[i];
+    }
+    int opp_moves;*/
     
     if (playerSide == WHITE)
     {
         base_score = white_count;
+      /*  vector <Move*> opp_possibles = possibleMoves(BLACK);
+        opp_moves = opp_possibles.size();
+        for (unsigned int i = 0; i < opp_possibles.size(); i++)
+        {
+            delete opp_possibles[i];
+        }*/
     }
     else
     {
         base_score = black_count;
+      /*  vector <Move*> opp_possibles = possibleMoves(WHITE);
+        opp_moves = opp_possibles.size();
+        for (unsigned int i = 0; i < opp_possibles.size(); i++)
+        {
+            delete opp_possibles[i];
+        }*/
     }
+    
+   /* int mobility_advantage = player_moves - opp_moves;
+    base_score += mobility_advantage;*/
     
     // count corners as five * score
     if (get(playerSide, 0, 0))
     {
-        base_score += 4;
+        base_score += CORN;
     }
     if (get(playerSide, 0, 7))
     {
-        base_score += 4;
+        base_score += CORN;
     }   
     if (get(playerSide, 7, 0))
     {
-        base_score += 4;
+        base_score += CORN;
     }    
     if (get(playerSide, 7, 7))
     {
-        base_score += 4;
+        base_score += CORN;
     }
     
     // count non-corner-adjacent edge squares as three * score
@@ -251,19 +273,19 @@ int Board::calculateScore(Side playerSide)
     {
         if (get(playerSide, 0, i))
         {
-            base_score += 2;
+            base_score += EDGE;
         }
         if (get(playerSide, 7, i))
         {
-            base_score += 2;
+            base_score += EDGE;
         }
         if (get(playerSide, i, 0))
         {
-            base_score += 2;
+            base_score += EDGE;
         }
         if (get(playerSide, i, 7))
         {
-            base_score += 2;
+            base_score += EDGE;
         }
     }
     
@@ -273,15 +295,15 @@ int Board::calculateScore(Side playerSide)
     {
         if (get(playerSide, 0, 1))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         } 
         if (get(playerSide, 1, 0))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         }
         if (get(playerSide, 1, 1))
         {
-            base_score -= 4;
+            base_score -= CORN_EMPTY_DIAG;
         }
     }
     
@@ -289,15 +311,15 @@ int Board::calculateScore(Side playerSide)
     {
         if (get(playerSide, 0, 6))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         } 
         if (get(playerSide, 1, 7))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         }
         if (get(playerSide, 1, 6))
         {
-            base_score -= 4;
+            base_score -= CORN_EMPTY_DIAG;
         }
     }
     
@@ -305,15 +327,15 @@ int Board::calculateScore(Side playerSide)
     {
         if (get(playerSide, 7, 1))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         } 
         if (get(playerSide, 6, 0))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         }
         if (get(playerSide, 6, 1))
         {
-            base_score -= 4;
+            base_score -= CORN_EMPTY_DIAG;
         }
     }
     
@@ -321,15 +343,15 @@ int Board::calculateScore(Side playerSide)
     {
         if (get(playerSide, 6, 7))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         } 
         if (get(playerSide, 7, 6))
         {
-            base_score -= 2;
+            base_score -= CORN_EMPTY_ADJ;
         }
         if (get(playerSide, 6, 6))
         {
-            base_score -= 4;
+            base_score -= CORN_EMPTY_DIAG;
         }
     }
     
